@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>user edit</title>
+
+<body>
+    <style>
+        /* ===== Body & General ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* ===== Container ===== */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    background-color: #fff;
+    padding: 20px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+/* ===== Headings ===== */
+h2 {
+    color: #2f3640;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* ===== Table ===== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+}
+
+table th, table td {
+    padding: 12px 15px;
+    text-align: left;
+}
+
+table th {
+    background-color: #00a8ff;
+    color: #fff;
+}
+
+table tr:nth-child(even) {
+    background-color: #f1f2f6;
+}
+
+table tr:hover {
+    background-color: #dcdde1;
+}
+
+/* ===== Buttons ===== */
+a {
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    color: #fff;
+    font-weight: 500;
+}
+
+a:hover {
+    opacity: 0.9;
+}
+
+.edit-btn {
+    background-color: #4cd137;
+}
+
+.delete-btn {
+    background-color: #e84118;
+}
+
+/* ===== Forms ===== */
+form {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+form input[type="text"],
+form input[type="email"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+form button {
+    padding: 10px 20px;
+    background-color: #00a8ff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+form button:hover {
+    background-color: #0097e6;
+}
+  @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+        margin: 30px auto;
+      }
+
+      form button {
+        padding: 12px;
+        font-size: 16px;
+      }
+    }
+    .success-msg {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  border: 1px solid #c3e6cb;
+  animation: fadeIn 0.5s ease;
+}
+
+    </style>
+    </head>
+    <h2>Edit User</h2>
+
+<form method="POST">
+      {% if 'user' in  messages.tags %}
+  {% for message in messages %}
+    <div class="success-msg">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+    {% csrf_token %}
+    <label>Username:</label>
+    <input type="text" name="username" value="{{ user.username }}" required><br><br>
+
+    <label>Email:</label>
+    <input type="email" name="email" value="{{ user.email }}" required><br><br>
+
+    <label>Phone:</label>
+    <input type="text" name="phone" value="{{ user.phone }}" required><br><br>
+
+    <button type="submit">Update User</button>
+</form>
+
+<a href="{% url 'admindashboard' %}">Back to Dashboard</a>
+
+
+</body>
+</html>

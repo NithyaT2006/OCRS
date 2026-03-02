@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complaint Status</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f7fa;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        h2 {
+            color: #266ca9;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        p {
+            font-size: 16px;
+            margin: 10px 0;
+            color: #333333;
+        }
+
+        p b {
+            color: #266ca9;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #266ca9;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #1b4f7a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Complaint Status</h2>
+
+        <p><b>Title:</b> {{ complaint.title }}</p>
+        <p><b>Category:</b> {{ complaint.category }}</p>
+        <p><b>Place:</b> {{ complaint.place }}</p>
+        <p><b>Status:</b> {{ complaint.status }}</p>
+        <p><b>Issue Date:</b> {{ complaint.issue_date }}</p>
+
+        <a href="{% url 'complaintportal' %}">⬅ Back to Dashboard</a>
+    </div>
+</body>
+</html>

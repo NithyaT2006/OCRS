@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Register</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #00ccff, #0066cc);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .register-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+      width: 400px;
+      position: relative;
+    }
+
+    h2 {
+      text-align: center;
+      color: #0066cc;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .password-box {
+      position: relative;
+    }
+
+    .toggle {
+      position: absolute;
+      right: 10px;
+      top: 38px;
+      cursor: pointer;
+      font-size: 14px;
+      color: #0066cc;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 12px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #004a99;
+    }
+
+    .msg {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .error {
+      background: #ffd6d6;
+      color: #b30000;
+    }
+
+    .success {
+      background: #d4edda;
+      color: #155724;
+    }
+    /* Close button */
+.close {
+  float: right;
+  font-size: 24px;
+  text-decoration: none;
+  color: #999;
+}
+
+.close:hover {
+  color: #f80707;
+  cursor: pointer;
+}
+  </style>
+</head>
+
+<body>
+  <div class="register-box">
+    
+      <a href="{%url 'index' %}#" class="close">&times;</a>
+
+    <h2>User Registration</h2>
+
+    <!-- Django messages -->
+    {% for message in messages %}
+      <div class="msg {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+
+    <form method="post" action="{% url 'register' %}">
+      {% csrf_token %}
+
+      <label>Username</label>
+      <input type="text" name="username" required>
+
+      <label>Email ID</label>
+      <input type="email" name="email" required>
+
+      <label>Phone Number</label>
+      <input type="tel" name="phone" pattern="[0-9]{10}" placeholder="10 digit number" required>
+
+      <label>Password</label>
+      <div class="password-box">
+        <input type="password" id="password" name="password"
+               minlength="6"
+               pattern="(?=.*[!@#$%^&*]).{6,}"
+               title="Minimum 6 characters and at least one special character"
+               required>
+        <span class="toggle" onclick="togglePassword('password')">👁</span>
+      </div>
+
+      <label>Confirm Password</label>
+      <div class="password-box">
+        <input type="password" id="confirm" name="confirm" required>
+        <span class="toggle" onclick="togglePassword('confirm')">👁</span>
+      </div>
+
+      <button type="submit">Register</button>
+    </form>
+    <p style="margin-top:15px; text-align:center;">
+  Already have an account?
+  <a href="{% url 'index' %}#loginModal" style="color:#0066cc; font-weight:600;">
+    Login
+  </a>
+</p>
+
+  </div>
+
+  <script>
+    function togglePassword(id) {
+      const field = document.getElementById(id);
+      field.type = field.type === "password" ? "text" : "password";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Complaint - Admin</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 450px;
+      margin: 50px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    h2 {
+      text-align: center;
+      color: #0066cc;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: 600;
+      color: #333;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #004a99;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      text-decoration: none;
+      color: #0066cc;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+     /* ===== Responsive Styles ===== */
+    @media (max-width: 500px) {
+      .container {
+        width: 90%;
+        padding: 20px;
+        margin: 20px auto;
+      }
+
+      input, select, textarea {
+        font-size: 16px;
+        padding: 12px;
+      }
+
+      button {
+        font-size: 16px;
+        padding: 14px;
+      }
+    }
+    .success-msg {
+  background: #d4edda;
+  color: #155724;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  font-weight: 600;
+  border: 1px solid #c3e6cb;
+  animation: fadeIn 0.5s ease;
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Edit Complaint</h2>
+    <form action="" method="post">
+        {% if 'complaint1' in messages.tags %}
+  {% for message in messages %}
+    <div class="success-msg">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+      {% csrf_token %}
+      <label for="title">Title</label>
+      <input type="text" id="title" name="title" value="{{ complaint.title }}" required>
+
+      <label for="category">Category</label>
+      <input type="text" id="category" name="category" value="{{ complaint.category }}" required>
+
+      <label for="place">Place</label>
+      <input type="text" id="place" name="place" value="{{ complaint.place }}" required>
+
+      <label for="description">Description</label>
+      <textarea id="description" name="description" required>{{ complaint.description }}</textarea>
+
+      <label for="status">Status</label>
+      <select name="status" id="status" required>
+        <option value="Pending" {% if complaint.status == "Pending" %}selected{% endif %}>Pending</option>
+        <option value="In Progress" {% if complaint.status == "In Progress" %}selected{% endif %}>In Progress</option>
+        <option value="Resolved" {% if complaint.status == "Resolved" %}selected{% endif %}>Resolved</option>
+      </select>
+
+      <button type="submit">Update Complaint</button>
+    </form>
+
+    <a href="{% url 'admindashboard' %}" class="back-link">Back to Dashboard</a>
+  </div>
+</body>
+</html>

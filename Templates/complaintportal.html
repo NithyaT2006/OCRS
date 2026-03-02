@@ -1,0 +1,386 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        /* --- GENERAL --- */
+        body {margin:0; font-family: Arial,sans-serif; background:#f9f9f9; transition: margin-left 0.3s; scroll-behavior:smooth;}
+        h2 {margin-top:0;}
+
+        /* --- TOPBAR --- */
+        .topbar {
+            height:60px;
+            background-color:#4CAF50;
+            color:white;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 20px;
+            position:fixed;
+            top:0; left:0; right:0;
+            z-index:1000;
+            box-shadow:0 2px 5px rgba(0,0,0,0.2);
+        }
+        .topbar .menu-toggle {font-size:24px; cursor:pointer; display:inline-block;}
+        .topbar .logout a {color:white; text-decoration:none; font-weight:bold; transition:0.3s;}
+        .topbar .logout a:hover {color:#ffdddd;}
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width:220px;
+            background:#f4f4f4;
+            position:fixed;
+            top:60px; bottom:0; left:0;
+            padding-top:20px;
+            box-shadow:2px 0 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            overflow-y:auto;
+        }
+        .sidebar.closed {transform: translateX(-220px);}
+        .sidebar ul {list-style:none; padding:0;}
+        .sidebar ul li {margin:10px 0;}
+        .sidebar ul li a {
+            text-decoration:none; color:#333; padding:10px 20px; display:block;
+            border-left:4px solid transparent; transition:0.3s;
+            cursor:pointer;
+        }
+        .sidebar ul li a:hover {
+            background:#ddd; border-left:4px solid #4CAF50; transform:translateX(5px);
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            margin-left:240px; padding:20px; margin-top:60px; transition: margin-left 0.3s;
+        }
+        .main-content.shifted {margin-left:20px;}
+
+        /* --- SECTIONS --- */
+        .content-section {
+            opacity:1;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .content-section.hidden {
+            opacity:0; transform: translateY(20px); height:0; overflow:hidden; pointer-events:none;
+        }
+
+        /* --- FORM FLOATING LABELS --- */
+        form {max-width:400px;}
+        .form-group {position:relative; margin:15px 0;}
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width:100%; padding:12px; font-size:16px;
+            border:1px solid #ccc; border-radius:4px;
+            outline:none; background:transparent;
+            transition:0.3s;
+        }
+        .form-group label {
+            position:absolute; left:12px; top:12px;
+            color:#aaa; font-size:16px; pointer-events:none;
+            transition:0.3s all;
+        }
+        .form-group input:focus + label,
+        .form-group textarea:focus + label,
+        .form-group select:focus + label,
+        .form-group input:not(:placeholder-shown) + label,
+        .form-group textarea:not(:placeholder-shown) + label,
+        .form-group select:not(:placeholder-shown) + label {
+            top:-8px; left:10px; font-size:12px; color:#4CAF50; background:#f9f9f9; padding:0 4px;
+        }
+        button {background:#4CAF50; color:white; border:none; cursor:pointer; transition:0.3s; border-radius:4px; padding:10px 15px;}
+        button:hover {background:#45a049; transform:scale(1.05);}
+
+        /* --- TABLE --- */
+        table {border-collapse:collapse; width:100%; max-width:800px; overflow-x:auto; display:block;}
+        table th, table td {border:1px solid #ccc; padding:8px; text-align:left; transition:0.3s;}
+        table tr:nth-child(even){background-color:#f2f2f2;}
+        table tr:hover {background-color:#ddd; transform:scale(1.01);}
+
+        /* --- MODAL --- */
+        .modal {display:none; position:fixed; inset:0; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:2000;}
+        .modal-content {
+            background:white; padding:30px; border-radius:8px; text-align:center;
+            max-width:300px; box-shadow:0 4px 8px rgba(0,0,0,0.2);
+            animation: fadeIn 0.3s ease forwards;
+        }
+        .modal-content button {margin:10px 5px;}
+        @keyframes fadeIn {from {opacity:0; transform: scale(0.8);} to {opacity:1; transform: scale(1);}}
+        #editProfileForm {
+    margin-top:15px;
+    opacity:1;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+    #editProfileForm.hidden {
+    opacity:0;
+    transform: translateY(-20px);
+    height:0;
+    overflow:hidden;
+    pointer-events:none;
+      }
+
+.alert {
+    padding: 10px;
+    background: #e0ffe0;
+    color: #006400;
+    margin-bottom: 10px;
+    border-radius: 6px;
+}
+    
+    </style>
+</head>
+<body>
+
+    <!-- TOPBAR -->
+    <div class="topbar">
+        <span class="menu-toggle" onclick="toggleSidebar()">☰</span>
+        <div class="welcome">Welcome, {{ request.user.username }}!</div>
+        <div class="logout"><a href="#" onclick="confirmLogout(event)">Logout</a></div>
+        <div class="logout"><a href="{% url 'index' %}" >Home</a></div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><a onclick="showSection('profile')">Profile</a></li>
+            <li><a onclick="showSection('submit')">Submit Complaint</a></li>
+       
+
+ 
+            <li><a onclick="showSection('mycomplaints')">My Complaints</a></li>
+        </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content" id="mainContent">
+
+        <!-- PROFILE -->
+        <div id="profile" class="content-section">
+            <h2>Profile</h2>
+            <p><strong>Username:</strong> {{ profile.username }}</p>
+            <p><strong>Email:</strong> {{ profile.email }}</p>
+            <p><strong>Phone:</strong> {{ profile.phone }}</p>
+         <button onclick="showEditProfile()">Edit Profile</button>
+
+    <!-- EDIT FORM (HIDDEN BY DEFAULT) -->
+    <div id="editProfileForm" class="{% if show_edit %}{% else %}hidden{% endif %}" >
+        <form method="post" action="{% url 'edit_profile' %}">
+            {% csrf_token %}
+
+          {% for message in messages %}
+  {% if 'profile' in message.tags %}
+    <div class="alert">{{ message }}</div>
+  {% endif %}
+{% endfor %}
+
+
+            <div class="form-group">
+                <input type="text" name="username" placeholder=" " value="{{ profile.username }}" required>
+                <label>Username</label>
+            </div>
+            <div class="form-group">
+                <input type="email" name="email" placeholder=" " value="{{ profile.email }}" required>
+                <label>Email</label>
+            </div>
+            <div class="form-group">
+                <input type="text" name="phone" placeholder=" " value="{{ profile.phone }}" required>
+                <label>Phone</label>
+            </div>
+            <button type="submit">Save Changes</button>
+            <button type="button" onclick="cancelEditProfile()">Cancel</button>
+        </form>
+    </div>
+        </div>
+
+    <!-- SUBMIT COMPLAINT -->
+<div id="submit" class="content-section hidden">
+    <h2>{% if edit_complaint %}Edit Complaint{% else %}Submit Complaint{% endif %}</h2>
+    <form method="post" enctype="multipart/form-data" 
+          action="{% if edit_complaint %}{% url 'edit_complaint' edit_complaint.id %}{% else %}{% url 'submit_complaint' %}{% endif %}">
+        {% csrf_token %}
+       
+        <div class="form-group">
+            <input type="text" name="title" placeholder=" " 
+                   value="{% if edit_complaint %}{{ edit_complaint.title }}{% endif %}" required>
+            <label>Complaint Title</label>
+        </div>
+
+        <div class="form-group">
+            <select name="category" required>
+                <option value="" hidden></option>
+                <option value="Road" {% if edit_complaint and edit_complaint.category == 'Road' %}selected{% endif %}>Road</option>
+                <option value="Electricity" {% if edit_complaint and edit_complaint.category == 'Electricity' %}selected{% endif %}>Electricity</option>
+                <option value="Water" {% if edit_complaint and edit_complaint.category == 'Water' %}selected{% endif %}>Water</option>
+                <option value="Environment" {% if edit_complaint and edit_complaint.category == 'Environment' %}selected{% endif %}>Environment</option>
+                <option value="Other" {% if edit_complaint and edit_complaint.category == 'Other' %}selected{% endif %}>Other</option>
+            </select>
+            <label>Category</label>
+        </div>
+
+        <div class="form-group">
+            <input type="date" name="issue_date" placeholder=" "
+                   value="{% if edit_complaint %}{{ edit_complaint.issue_date|date:'Y-m-d' }}{% endif %}" required>
+            <label>Issue Date</label>
+        </div>
+
+        <div class="form-group">
+            <input type="text" name="place" placeholder=" "
+                   value="{% if edit_complaint %}{{ edit_complaint.place }}{% endif %}" required>
+            <label>Issue Place</label>
+        </div>
+
+        <div class="form-group">
+            <textarea name="description" placeholder=" " required>{% if edit_complaint %}{{ edit_complaint.description }}{% endif %}</textarea>
+            <label>Description</label>
+        </div>
+
+        <div class="form-group">
+            
+    {% if edit_complaint and edit_complaint.attachment %}
+        <p style="margin-bottom:5px; padding: 5px;">Current Attachment:</p>
+        <img src="{{ edit_complaint.attachment.url }}"
+             style="width:120px; height:120px; object-fit:cover;
+                    border-radius:8px; margin-bottom:10px;">
+                    
+    {% endif %}
+            <input type="file" name="attachment" placeholder=" " accept="image/*,video/*">
+            <label>Attach File</label>
+        </div>
+
+        <button type="submit">{% if edit_complaint %}Update Complaint{% else %}Submit Complaint{% endif %}</button>
+
+        {% if edit_complaint %}
+            <button type="button" onclick="window.location.href='{% url 'complaintportal' %}'">Cancel</button>
+        {% endif %}
+    </form>
+</div>
+   
+        <!-- MY COMPLAINTS -->
+        <div id="mycomplaints" class="content-section hidden">
+            <h2>My Complaints</h2>
+          
+        {% for message in messages %}
+            {% if 'complaint' in message.tags %}
+                <p style="color: green; font-weight: bold;">{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+
+        
+            <table>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Place</th>
+                    <th>Attachment</th>
+                    <th>Actions</th>
+
+                </tr>
+                {% for complaint in complaints %}
+                <tr>
+                    <td>{{ complaint.id }}</td>
+                    <td>{{ complaint.title }}</td>
+                    <td>{{ complaint.category }}</td>
+                    <td>{{ complaint.status }}</td>
+                    <td>{{ complaint.created_at|date:"d-m-Y H:i" }}</td>
+                    <td>{{ complaint.place }}</td>
+                    <td>
+    {% if complaint.attachment %}
+        <a href="{{ complaint.attachment.url }}" target="_blank">
+            <img src="{{ complaint.attachment.url }}" 
+                 style="width:80px; height:80px; object-fit:cover; border-radius:6px;">
+        </a>
+    {% else %}
+        No File
+    {% endif %}
+</td>
+
+                    
+                    
+    <td>
+        {% if complaint.status == "Pending" %}
+            <a href="{% url 'edit_complaint' complaint.id %}">
+                <button>Edit</button>
+            </a>
+
+            <a href="{% url 'delete_complaint' complaint.id %}"
+               onclick="return confirm('Are you sure you want to delete this complaint?');">
+                <button style="background:red;">Delete</button>
+            </a>
+        {% else %}
+            <span style="color:gray;">Locked</span>
+        {% endif %}
+    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="8">No complaints submitted yet.</td></tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+    <!-- LOGOUT MODAL -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <p>Are you sure you want to logout?</p>
+            <button onclick="proceedLogout()">Yes</button>
+            <button onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script>
+        function showSection(id){
+            document.querySelectorAll('.content-section').forEach(sec=>sec.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function toggleSidebar(){
+            document.getElementById('sidebar').classList.toggle('closed');
+            document.getElementById('mainContent').classList.toggle('shifted');
+        }
+
+        function confirmLogout(e){
+            e.preventDefault();
+            document.getElementById('logoutModal').style.display='flex';
+        }
+        function closeModal(){
+            document.getElementById('logoutModal').style.display='none';
+        }
+        function proceedLogout(){
+            window.location.href="{% url 'userlogout' %}";
+        }
+        function showEditProfile(){
+        document.getElementById('editProfileForm').classList.remove('hidden');
+       }
+
+       function cancelEditProfile(){
+       document.getElementById('editProfileForm').classList.add('hidden');
+       }
+       document.addEventListener("DOMContentLoaded", function () {
+    {% if edit_complaint %}
+        showSection('submit');  // open the form section
+        // pre-fill is already handled in template via edit_complaint
+        // scroll to the form
+        document.getElementById('submit').scrollIntoView({behavior:'smooth'});
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if 'complaint' in message.tags %}
+                showSection('mycomplaints');
+            {% endif %}
+            {% if 'profile' in message.tags %}
+                showSection('profile');
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+});
+    </script>
+
+</body>
+</html>

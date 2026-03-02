@@ -1,0 +1,230 @@
+{% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Online complain system</title>
+  
+    
+    
+
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="nav-wrap">
+      <div class="brand">Complaint Portal</div>
+      <nav class="nav-links">
+        <a href="#">Home</a>
+        <a href="#loginModal">User Login</a>
+        <a href="{% url 'register' %}"> User Register </a>
+        <a href="{% url 'adminlogin' %}">Admin Login</a>
+        <a href="#about">About</a>
+        <a href="#footer">Contact Us</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section >
+    <div class="hero-text">
+      <h1>Welcome to Complaint Management System</h1>
+      <p>Register, track, and resolve your complaints easily and transparently.</p>
+      <input type="checkbox" id="toggleBox" hidden>
+      <label for="toggleBox" class="btn-primary">Register Complaint</label>
+
+    
+    <!-- Popup Box must be sibling of toggleBox -->
+    <div class="popup-box">
+      <h2>Select Role</h2>
+      <div class="options">
+        <a href="{% url 'adminlogin' %}" class="role-btn">Admin</a>
+        <a href="{% url 'register' %}" class="role-btn">User</a>
+      </div>
+      <!-- Close button -->
+      <label for="toggleBox" class="close-btn">Close</label>
+    </div>
+  </div>
+</section>
+
+
+<div class="comman-bg">
+
+  <section id="about" class="image">
+    <h1 class="one">About</h1>
+    <p class="two">An Online Complaint Registration and Management System is a digital platform designed to make grievance handling simple, transparent, and efficient. It allows citizens, customers, or employees to register complaints online and track their resolution in real time.</p>
+    <h2 class="three">Benefits</h2>
+    <ul class="four">
+      <li>Saves time and reduces paperwork.</li>
+      <li>Builds trust through transparent processes.</li>
+      <li>Improves efficiency in complaint handling.</li>
+      <li>Provides valuable data for administrators to analyze and improve services</li>  
+    </ul>
+    <img src="{% static 'css/images/ig.jpg' %}">
+  </section>
+  <section class="captions">
+    <h2>Online Complaint registration</h2>
+    <p>Report Issues Digitally-Where Reported Issues Meet Efficient Action.</p>
+
+  </section>
+
+  <section class="features">
+  <h2 class="hi">Our Features</h2>
+  <div class="feature-gallery">
+    <div class="feature-item">
+      <img src="{% static 'css/images/crt.jpg' %}">
+      <p class="caption">complaint</p>
+    </div>
+    <div class="feature-item">
+    
+<img src="{% static 'css/images/register.jpg' %}">
+      <p class="caption">Register</p>
+    </div>
+    <div class="feature-item">
+  
+<img src="{% static 'css/images/multiple.jpg' %}">
+      <p class="caption">Multiple Access</p>
+    </div>
+    <div class="feature-item">
+      
+<img src="{% static 'css/images/transparrency.webp' %}">
+      <p class="caption">Transparrency</p>
+    </div>
+    <div class="feature-item">
+      
+<img src="{% static 'css/images/tracking.webp' %}">
+      <p class="caption">Tracking</p>
+    </div>
+    <div class="feature-item">
+
+<img src="{% static 'css/images/sol.avif' %}">
+      <p class="caption">Quick Solution</p>
+    </div>
+  </div>
+    
+  </div>
+</section>
+
+  <footer id="footer" class="footer">
+    <div class="footer-container">
+      <!-- Left side: Brand -->
+      <div class="footer-brand">
+        <h3>Complaint Portal</h3>
+        <p>Making complaint registration simple and transparent.</p>
+      </div>
+
+      <!-- Middle: Quick Links -->
+      <div class="footer-links">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Register Complaint</a></li>
+          <li><a href="#">Track Complaint</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Right side: Contact -->
+      <div class="footer-contact">
+        <h4>Contact Us</h4>
+        <p>Email: support@complaintportal.com</p>
+        <p>Phone: +91 98765 43210</p>
+      </div>
+    </div>
+
+    <!-- Bottom line -->
+    <div class="footer-bottom">
+      <p>&copy; 2025 Complaint Portal. All rights reserved.</p>
+    </div>
+  </footer>
+
+
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <a href="{%url 'index' %}#" class="close">&times;</a>
+
+    <h2>User Login</h2>
+
+    <!-- Django messages -->
+    {% for message in messages %}
+      {% if 'login' in message.tags %}
+      <p style="color:red;">{{ message }}</p>
+       {% endif %}
+    {% endfor %}
+
+    <form method="post" action="{% url 'userlogin' %}">
+      {% csrf_token %}
+
+      <label for="username">Username</label>
+      <input type="text" name="username" placeholder="Username" required>
+
+      <label for="password">Password</label>
+      <input type="password" name="password" placeholder="Password" required>
+
+     <button class="btn" type="submit">Login</button>
+
+    </form>
+
+    <p style="margin-top:15px;">
+      Don’t have an account?
+      <a href="{% url 'register' %}">New User</a>
+    </p>
+
+    <p style="text-align:center; margin-top:10px;">
+  <a href="#forgotModal" onclick="openForgot()">Forgot Password?</a>
+</p>
+
+  </div>
+</div>
+
+<div id="forgotModal"  class="hello ">
+  <div class="hi">
+
+    <a href="{% url 'index' %}" class="close">&times;</a>
+
+  <form method="post" action="{% url 'forgotpassword' %}">
+    {% csrf_token %}
+
+    <h3>Reset Password</h3>
+<input type="text" name="username" placeholder="Username or Email" required>
+<br> 
+<br> 
+<button type="submit">Send OTP</button>
+  </form>
+</div>
+</div>
+<script>
+  
+  document.getElementById('forgotModal').style.display = 'none';
+
+  function openForgot() {
+    
+    document.getElementById('forgotModal').style.display = 'flex';
+
+  }
+ 
+  document.addEventListener("DOMContentLoaded", function () {
+    {% if messages %}
+      var modal = document.getElementById("loginModal");
+      if (modal) {
+        modal.style.display = "flex";
+      }
+    {% endif %}
+  });
+
+
+
+</script>
+
+
+
+
+
+  
+</body>
+
+</html>
