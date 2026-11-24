@@ -20,13 +20,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-8p(o%lq!_k+pge9&96cucc@o27ad1z(0x@n%cmov=)wpps@&l*'
+import os
+SECRET_KEY = os.environ.get('SECRET_KEY')
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '.onrender.com']
 
-ALLOWED_HOSTS = []
-
+CSRF_TRUSTED_ORIGINS = ['https://*.onrender.com']
 
 # Application definition
 
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -68,10 +69,7 @@ TEMPLATES = [
     },
 ]
 
-STATICFILES_DIRS = [
-    BASE_DIR/"static",
 
-]
 
 WSGI_APPLICATION = 'onlinecomplaint.wsgi.application'
 
@@ -123,6 +121,11 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR/"static",
+
+]
+
 # Redirect unauthenticated users to your login page
 LOGIN_URL = 'userlogin'          # name of your login URL in urls.py
 LOGIN_REDIRECT_URL = 'complaintportal'  # where to go after login
@@ -140,14 +143,13 @@ EMAIL_PORT = 587
 
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'ResolveX0510@gmail.com'  
-    
-EMAIL_HOST_PASSWORD = 'zvqgvmifbkdoaiqw'
-    
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+
 
 import os
 
@@ -155,11 +157,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# --- CSRF & Session (for local development) ---
-CSRF_COOKIE_SECURE = False
-SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
 
-ALLOWED_HOSTS = ['*']
 
 import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
